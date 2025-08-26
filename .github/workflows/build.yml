@@ -54,6 +54,9 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+
+    - name: Make mvnw executable
+      run: chmod +x mvnw
     
     - name: Set up JDK 21
       uses: actions/setup-java@v4
@@ -93,6 +96,9 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+
+    - name: Make mvnw executable
+      run: chmod +x mvnw
     
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -134,6 +140,9 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
+    
+    - name: Make mvnw executable
+      run: chmod +x mvnw
     
     - name: Set up JDK 21
       uses: actions/setup-java@v4
