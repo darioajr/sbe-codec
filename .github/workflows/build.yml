@@ -89,7 +89,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   native-build:
-    needs: build,quality
+    needs: [build, quality]
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -149,7 +149,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docker:
-    needs: build,quality
+    needs: [build, quality]
     runs-on: ubuntu-latest
     
     steps:
