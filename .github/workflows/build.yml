@@ -1,4 +1,4 @@
-name: Build and Test
+name: Build, Test and Release
 
 on:
   push:
@@ -89,6 +89,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   native-build:
+    needs: build,quality
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -148,9 +149,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docker:
-    needs: build
+    needs: build,quality
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.event_name == 'release'
     
     steps:
     - uses: actions/checkout@v4
