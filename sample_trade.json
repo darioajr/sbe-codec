@@ -1,0 +1,10 @@
+{
+  "tradeId": 67890,
+  "orderId": 12345,
+  "symbol": "AAPL",
+  "side": "BUY",
+  "quantity": 500,
+  "price": 14950,
+  "timestamp": 1693478400000,
+  "venue": "NASDAQ"
+}

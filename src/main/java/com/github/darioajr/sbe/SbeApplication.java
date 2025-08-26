@@ -1,20 +1,159 @@
 package com.github.darioajr.sbe;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Main application demonstrating SBE serialization and deserialization
+ * Command-line utility for SBE serialization and deserialization
+ * 
+ * Usage:
+ *   java SbeApplication serialize <type> <input-file> <output-file>
+ *   java SbeApplication deserialize <input-file> [output-file]
+ *   java SbeApplication demo
+ * 
+ * Types: order, trade, marketdata
  */
 public class SbeApplication {
     
+    private static final SbeSerializer serializer = new SbeSerializer();
+    private static final SbeDeserializer deserializer = new SbeDeserializer();
+    
     public static void main(String[] args) {
-        System.out.println("SBE Encoder/Decoder Application");
-        System.out.println("Java Version: " + System.getProperty("java.version"));
-        System.out.println("Native Image: " + (System.getProperty("org.graalvm.nativeimage.imagecode") != null));
+        if (args.length == 0) {
+            printUsage();
+            return;
+        }
         
-        SbeSerializer serializer = new SbeSerializer();
-        SbeDeserializer deserializer = new SbeDeserializer();
+        String command = args[0].toLowerCase();
+        
+        try {
+            switch (command) {
+                case "serialize" -> handleSerialize(args);
+                case "deserialize" -> handleDeserialize(args);
+                case "demo" -> runDemo();
+                case "help", "-h", "--help" -> printUsage();
+                default -> {
+                    System.err.println("Unknown command: " + command);
+                    printUsage();
+                    System.exit(1);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+    
+    private static void printUsage() {
+        System.out.println("SBE Encoder/Decoder Command-Line Utility");
+        System.out.println("Usage:");
+        System.out.println("  serialize <type> <input-json> <output-binary>");
+        System.out.println("  deserialize <input-binary> [output-json]");
+        System.out.println("  demo");
+        System.out.println("  help");
+        System.out.println();
+        System.out.println("Commands:");
+        System.out.println("  serialize   - Convert JSON data to SBE binary format");
+        System.out.println("  deserialize - Convert SBE binary data to JSON format");
+        System.out.println("  demo        - Run demonstration examples");
+        System.out.println("  help        - Show this help message");
+        System.out.println();
+        System.out.println("Types for serialize:");
+        System.out.println("  order       - Serialize order data");
+        System.out.println("  trade       - Serialize trade data");
+        System.out.println("  marketdata  - Serialize market data");
+        System.out.println();
+        System.out.println("Examples:");
+        System.out.println("  serialize order order.json order.sbe");
+        System.out.println("  deserialize order.sbe order_output.json");
+        System.out.println("  demo");
+    }
+    
+    private static void handleSerialize(String[] args) throws IOException {
+        if (args.length != 4) {
+            System.err.println("Usage: serialize <type> <input-json> <output-binary>");
+            System.exit(1);
+        }
+        
+        String type = args[1].toLowerCase();
+        String inputFile = args[2];
+        String outputFile = args[3];
+        
+        Path inputPath = Paths.get(inputFile);
+        if (!Files.exists(inputPath)) {
+            System.err.println("Input file does not exist: " + inputFile);
+            System.exit(1);
+        }
+        
+        String jsonContent = Files.readString(inputPath);
+        byte[] serializedData;
+        
+        switch (type) {
+            case "order" -> {
+                OrderData orderData = JsonParser.parseOrder(jsonContent);
+                serializedData = serializer.serializeOrder(orderData);
+                System.out.println("Serialized Order: " + orderData);
+            }
+            case "trade" -> {
+                TradeData tradeData = JsonParser.parseTrade(jsonContent);
+                serializedData = serializer.serializeTrade(tradeData);
+                System.out.println("Serialized Trade: " + tradeData);
+            }
+            case "marketdata" -> {
+                MarketDataData marketData = JsonParser.parseMarketData(jsonContent);
+                serializedData = serializer.serializeMarketData(marketData);
+                System.out.println("Serialized MarketData: " + marketData);
+            }
+            default -> {
+                System.err.println("Unknown type: " + type + ". Use: order, trade, or marketdata");
+                System.exit(1);
+                return;
+            }
+        }
+        
+        Files.write(Paths.get(outputFile), serializedData);
+        System.out.println("Serialized data written to: " + outputFile + " (" + serializedData.length + " bytes)");
+    }
+    
+    private static void handleDeserialize(String[] args) throws IOException {
+        if (args.length < 2 || args.length > 3) {
+            System.err.println("Usage: deserialize <input-binary> [output-json]");
+            System.exit(1);
+        }
+        
+        String inputFile = args[1];
+        String outputFile = args.length == 3 ? args[2] : null;
+        
+        Path inputPath = Paths.get(inputFile);
+        if (!Files.exists(inputPath)) {
+            System.err.println("Input file does not exist: " + inputFile);
+            System.exit(1);
+        }
+        
+        byte[] binaryData = Files.readAllBytes(inputPath);
+        Object deserializedObject = deserializer.deserialize(binaryData);
+        
+        String jsonOutput = JsonFormatter.toJson(deserializedObject);
+        
+        if (outputFile != null) {
+            Files.writeString(Paths.get(outputFile), jsonOutput);
+            System.out.println("Deserialized data written to: " + outputFile);
+        } else {
+            System.out.println("Deserialized data:");
+            System.out.println(jsonOutput);
+        }
+        
+        System.out.println("Deserialized object: " + deserializedObject);
+    }
+    
+    private static void runDemo() {
+        System.out.println("Running SBE demonstration examples...");
+        System.out.println();
         
         // Example 1: Order serialization/deserialization
         demonstrateOrderSerialization(serializer, deserializer);

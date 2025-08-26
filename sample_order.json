@@ -1,0 +1,10 @@
+{
+  "orderId": 12345,
+  "symbol": "AAPL",
+  "side": "BUY",
+  "quantity": 1000,
+  "price": 15000,
+  "timestamp": 1693478400000,
+  "isActive": "TRUE",
+  "clientOrderId": "CLIENT-ORDER-001"
+}

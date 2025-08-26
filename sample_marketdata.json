@@ -1,0 +1,32 @@
+{
+  "symbol": "AAPL",
+  "timestamp": 1693478400000,
+  "bidPrice": 14950,
+  "bidSize": 2000,
+  "askPrice": 15050,
+  "askSize": 1500,
+  "lastPrice": 15000,
+  "lastSize": 500,
+  "levels": [
+    {
+      "price": 14900,
+      "size": 1000,
+      "side": "BUY"
+    },
+    {
+      "price": 14950,
+      "size": 2000,
+      "side": "BUY"
+    },
+    {
+      "price": 15050,
+      "size": 1500,
+      "side": "SELL"
+    },
+    {
+      "price": 15100,
+      "size": 800,
+      "side": "SELL"
+    }
+  ]
+}
