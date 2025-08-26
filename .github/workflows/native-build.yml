@@ -8,6 +8,11 @@ on:
   release:
     types: [ published ]
 
+permissions:
+  contents: read
+  checks: write
+  actions: read
+
 jobs:
   native-build:
     strategy:
