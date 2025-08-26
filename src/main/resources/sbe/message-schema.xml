@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbe:messageSchema xmlns:sbe="http://fixprotocol.io/2016/sbe"
+                   package="com.example.sbe.generated"
+                   id="1"
+                   version="1"
+                   semanticVersion="1.0.0"
+                   description="Example SBE Message Schema"
+                   byteOrder="littleEndian">
+
+    <types>
+        <composite name="messageHeader" description="Message identifiers and length of message root">
+            <type name="blockLength" primitiveType="uint16"/>
+            <type name="templateId" primitiveType="uint16"/>
+            <type name="schemaId" primitiveType="uint16"/>
+            <type name="version" primitiveType="uint16"/>
+        </composite>
+
+        <composite name="groupSizeEncoding" description="Repeating group dimensions">
+            <type name="blockLength" primitiveType="uint16"/>
+            <type name="numInGroup" primitiveType="uint16"/>
+        </composite>
+
+        <composite name="varAsciiEncoding" description="Variable length ASCII string">
+            <type name="length" primitiveType="uint32" maxValue="1073741824"/>
+            <type name="varData" primitiveType="uint8" length="0" characterEncoding="US-ASCII"/>
+        </composite>
+
+        <enum name="BooleanType" encodingType="uint8">
+            <validValue name="FALSE">0</validValue>
+            <validValue name="TRUE">1</validValue>
+        </enum>
+
+        <enum name="Side" encodingType="char">
+            <validValue name="BUY">B</validValue>
+            <validValue name="SELL">S</validValue>
+        </enum>
+    </types>
+
+    <sbe:message name="Order" id="1" description="Order message">
+        <field name="orderId" id="1" type="uint64" description="Unique order identifier"/>
+        <field name="symbol" id="2" type="char" length="8" description="Trading symbol"/>
+        <field name="side" id="3" type="Side" description="Buy or sell side"/>
+        <field name="quantity" id="4" type="uint64" description="Order quantity"/>
+        <field name="price" id="5" type="uint64" description="Order price in ticks"/>
+        <field name="timestamp" id="6" type="uint64" description="Order timestamp"/>
+        <field name="isActive" id="7" type="BooleanType" description="Is order active"/>
+        <data name="clientOrderId" id="8" type="varAsciiEncoding" description="Client order ID"/>
+    </sbe:message>
+
+    <sbe:message name="Trade" id="2" description="Trade execution message">
+        <field name="tradeId" id="1" type="uint64" description="Unique trade identifier"/>
+        <field name="orderId" id="2" type="uint64" description="Related order identifier"/>
+        <field name="symbol" id="3" type="char" length="8" description="Trading symbol"/>
+        <field name="side" id="4" type="Side" description="Buy or sell side"/>
+        <field name="quantity" id="5" type="uint64" description="Executed quantity"/>
+        <field name="price" id="6" type="uint64" description="Execution price in ticks"/>
+        <field name="timestamp" id="7" type="uint64" description="Execution timestamp"/>
+        <data name="venue" id="8" type="varAsciiEncoding" description="Execution venue"/>
+    </sbe:message>
+
+    <sbe:message name="MarketData" id="3" description="Market data snapshot">
+        <field name="symbol" id="1" type="char" length="8" description="Trading symbol"/>
+        <field name="timestamp" id="2" type="uint64" description="Market data timestamp"/>
+        <field name="bidPrice" id="3" type="uint64" description="Best bid price"/>
+        <field name="bidSize" id="4" type="uint64" description="Best bid size"/>
+        <field name="askPrice" id="5" type="uint64" description="Best ask price"/>
+        <field name="askSize" id="6" type="uint64" description="Best ask size"/>
+        <field name="lastPrice" id="7" type="uint64" description="Last trade price"/>
+        <field name="lastSize" id="8" type="uint64" description="Last trade size"/>
+        
+        <group name="levels" id="9" description="Price levels">
+            <field name="price" id="10" type="uint64" description="Price level"/>
+            <field name="size" id="11" type="uint64" description="Size at level"/>
+            <field name="side" id="12" type="Side" description="Bid or ask side"/>
+        </group>
+    </sbe:message>
+</sbe:messageSchema>

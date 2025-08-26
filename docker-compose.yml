@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # Java application build and run
+  sbe-java:
+    build:
+      context: .
+      dockerfile: Dockerfile.java
+    container_name: sbe-encoder-decoder-java
+    ports:
+      - "8080:8080"
+    environment:
+      - JAVA_OPTS=-Xmx512m -Xms256m
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "java", "-version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Native image build and run
+  sbe-native:
+    build:
+      context: .
+      dockerfile: Dockerfile.native
+    container_name: sbe-encoder-decoder-native
+    ports:
+      - "8081:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "./sbe-encoder-decoder", "--version"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  default:
+    name: sbe-network

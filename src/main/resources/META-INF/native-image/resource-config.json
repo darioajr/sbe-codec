@@ -1,0 +1,12 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": "sbe/.*\\.xml"
+      },
+      {
+        "pattern": "META-INF/.*"
+      }
+    ]
+  }
+}
