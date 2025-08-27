@@ -179,6 +179,7 @@ jobs:
           ${{ env.IMAGE_NAME }}:latest
           ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
         context: .
+        file: ./Dockerfile.native
         build-args: |
           VERSION=${{ steps.meta.outputs.version }}
           BUILD_DATE=${{ steps.meta.outputs.build_date }}
